@@ -1,0 +1,62 @@
+// server/routes/summarize.js
+const express = require("express");
+const router = express.Router();
+const multer = require("multer");
+const { parsePDF } = require("../services/pdfParser");
+const { fetchAndCleanURL } = require("../services/urlParser");
+const OpenAI = require("openai");
+require("dotenv").config();
+
+const upload = multer({ dest: "uploads/" });
+console.log("API Key:", process.env.OPENAI_API_KEY?.slice(0, 16)); // should print part of key
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Summarize URL
+router.post("/url", async (req, res) => {
+  try {
+    const { url } = req.body;
+    const text = await fetchAndCleanURL(url);
+
+    const summary = await summarizeText(text);
+    res.json({ summary });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Summarize PDF
+router.post("/pdf", upload.single("file"), async (req, res) => {
+  try {
+    const text = await parsePDF(req.file.path);
+    const summary = await summarizeText(text);
+    res.json({ summary });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+async function summarizeText(text) {
+  const prompt = `Summarize the following content:\n\n${text.substring(
+    0,
+    3000
+  )}`;
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo", // you can also use "gpt-4" if you have access
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    max_tokens: 300,
+    temperature: 0.5,
+  });
+
+  return response.choices[0].message.content.trim();
+}
+
+module.exports = router;
