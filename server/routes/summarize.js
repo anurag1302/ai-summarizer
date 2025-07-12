@@ -12,6 +12,7 @@ console.log("API Key:", process.env.OPENAI_API_KEY?.slice(0, 16)); // should pri
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  baseURL: process.env.OPENAI_BASE_URL, // important!
 });
 
 // Summarize URL
@@ -45,7 +46,7 @@ async function summarizeText(text) {
   )}`;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo", // you can also use "gpt-4" if you have access
+    model: "openai/gpt-4.1-mini", // you can also use "gpt-4" if you have access
     messages: [
       {
         role: "user",

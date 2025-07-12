@@ -7,6 +7,8 @@ const summarizeRoutes = require("./routes/summarize");
 
 dotenv.config();
 const app = express();
+const cors = require("cors");
+app.use(cors());
 
 app.use(express.json());
 app.get("/", (req, res) => {
@@ -17,5 +19,5 @@ app.get("/", (req, res) => {
 
 app.use("/api/summarize", summarizeRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 9999;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
