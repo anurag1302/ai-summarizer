@@ -1,4 +1,3 @@
-// server/routes/summarize.js
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
@@ -8,11 +7,10 @@ const OpenAI = require("openai");
 require("dotenv").config();
 
 const upload = multer({ dest: "uploads/" });
-console.log("API Key:", process.env.OPENAI_API_KEY?.slice(0, 16)); // should print part of key
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  baseURL: process.env.OPENAI_BASE_URL, // important!
+  baseURL: process.env.OPENAI_BASE_URL,
 });
 
 // Summarize URL
@@ -46,7 +44,7 @@ async function summarizeText(text) {
   )}`;
 
   const response = await openai.chat.completions.create({
-    model: "openai/gpt-4.1-mini", // you can also use "gpt-4" if you have access
+    model: "openai/gpt-4.1-mini",
     messages: [
       {
         role: "user",

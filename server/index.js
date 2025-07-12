@@ -13,7 +13,6 @@ app.use(cors());
 app.use(express.json());
 app.get("/", (req, res) => {
   console.log("💥 Root route hit");
-
   res.send("✅ AI Summarizer API is running.");
 });
 
